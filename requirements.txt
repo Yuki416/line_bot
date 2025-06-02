@@ -10,3 +10,5 @@ imgurpython
 openai
 python-dotenv
 faiss-cpu
+langchain
+requests
