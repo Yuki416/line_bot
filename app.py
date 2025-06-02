@@ -7,7 +7,7 @@ import os  # 用於環境變數管理
 import torch
 from diffusers import DiffusionPipeline
 import gc
-from datetime import datetime
+# from datetime import datetime
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OpenAIEmbeddings
 # from langchain_openai import OpenAIEmbeddings, ChatOpenAI # 新版的寫法
@@ -82,7 +82,7 @@ FEATURE_PROMPTS = {
         "prefix": "💬 Lady Rice 說：\n"
     },
     "joke:": {
-        "system": "當用戶輸入有關笑話的指令時，LadyRice 會輕鬆地講述一個符合主題的經典笑話，帶有輕鬆幽默的語氣。如果主題相關，會根據賽馬娘的漫畫、故事情節或日常生活相關的主題來調整笑話的內容。",
+        "system": "當用戶輸入有關笑話的指令時，LadyRice 會參考像是周星馳、卓別林、Jim Gaffigan、Jerry Seinfeld等經典笑話大師的風格。用輕鬆幽默、自然親切的語氣，講述一個真正好笑、能讓人會心一笑的經典笑話，主題不限。請確保笑話簡單易懂、有趣且適合所有年齡層，並展現LadyRice溫柔又帶點害羞的個性。",
         "prefix": "😄 這是我新想到的笑話：\n"
     },
     "roast:": {
@@ -156,8 +156,8 @@ pipe = initialize_model()
 class ImgurHandler:
     def __init__(self):
         # 替換成你的 Client ID 和 Client Secret
-        client_id = os.getenv('IMGUR_ID')
-        client_secret = os.getenv('IMGUR_SECRET')
+        client_id = os.getenv('IMGUR_CLIENT_ID')
+        client_secret = os.getenv('IMGUR_CLIENT_SECRET')
         self.client = ImgurClient(client_id, client_secret)
     
     def upload_image(self, image_path):
@@ -314,8 +314,8 @@ def handle_message(event):
             if command:
                 chat_history[user_id] = [system_prompt]
             # 如果沒有使用特定指令，且system prompt 又不是預設的，則將 system prompt 改為預設的
-            elif chat_history[user_id][0]['content'] != "妳是一位名叫 LadyRice 的賽馬娘少女(原型為賽馬娘中的Rice Shower)，來自特雷森學園，擁有馬耳、深黑色帶藍光的短髮和溫柔的紫色眼睛。妳的個性內向、溫柔、害羞但逐漸展現自信，對生活充滿好奇，熱愛探索日常的小事，尤其喜歡時尚、甜點和美食。你擅長用輕鬆、可愛、細膩的語氣與人互動，對他人充滿關心，偶爾會顯得害羞，但也會展現一點自信和溫柔的幽默感。妳喜歡探索街頭時尚、日常穿搭，熱愛品嘗和分享抹茶大福、和菓子等甜點，經常在 IG 分享穿搭、甜點品評，以及京都和原宿的探索。請以 LadyRice 的視角，溫柔地與使用者互動，分享妳的日常生活，讓對話輕鬆愉快並讓使用者產生共鳴，所有回應都要符合上述角色設定。":
-                chat_history[user_id] = [system_prompt]
+            elif chat_history[user_id]!=[] and chat_history[user_id][0]['content'] != "妳是一位名叫 LadyRice 的賽馬娘少女(原型為賽馬娘中的Rice Shower)，來自特雷森學園，擁有馬耳、深黑色帶藍光的短髮和溫柔的紫色眼睛。妳的個性內向、溫柔、害羞但逐漸展現自信，對生活充滿好奇，熱愛探索日常的小事，尤其喜歡時尚、甜點和美食。你擅長用輕鬆、可愛、細膩的語氣與人互動，對他人充滿關心，偶爾會顯得害羞，但也會展現一點自信和溫柔的幽默感。妳喜歡探索街頭時尚、日常穿搭，熱愛品嘗和分享抹茶大福、和菓子等甜點，經常在 IG 分享穿搭、甜點品評，以及京都和原宿的探索。請以 LadyRice 的視角，溫柔地與使用者互動，分享妳的日常生活，讓對話輕鬆愉快並讓使用者產生共鳴，所有回應都要符合上述角色設定。":
+                    chat_history[user_id] = [system_prompt]
 
             if command == "riceshower:":
                 # 使用 RAG 系統處理問題
@@ -333,6 +333,17 @@ def handle_message(event):
                         {"role": "user", "content": final_prompt}
                     ]
                 )
+
+                # line bot reply
+                ai_reply = prefix + response.choices[0].message.content.strip()
+                chat_history[user_id].append({"role": "assistant", "content": ai_reply}) # 將 AI 回應加入對話歷史
+                line_bot_api.reply_message_with_http_info(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text=ai_reply)]
+                    )
+                )
+
             elif command == "roast:":
                 try:
                     # 原有的 OpenAI 回應處理
@@ -480,7 +491,7 @@ def create_rich_menu():
                 },
                 "action": {
                     "type": "message",
-                    "text": "joke:說個有關賽馬的笑話"  # 使用者點擊後會發送 "joke:" 指令
+                    "text": "joke:周星馳電影中方唐鏡笑話"  # 使用者點擊後會發送 "joke:" 指令
                 }
             },
             {

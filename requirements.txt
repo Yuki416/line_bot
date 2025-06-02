@@ -11,4 +11,6 @@ openai
 python-dotenv
 faiss-cpu
 langchain
+langchain-community
+sentence-transformers
 requests
