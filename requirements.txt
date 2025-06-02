@@ -1,0 +1,12 @@
+line-bot-sdk==3.7
+flask==3.0.0
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
+diffusers
+transformers==4.51.3
+accelerate==1.6.0
+imgurpython
+openai
+python-dotenv
+faiss-cpu
