@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
-> A LINE chatbot that brings an original virtual character, LadyRice, to life: she chats in character, draws illustrations of herself, and answers questions about her own backstory.
+> A LINE chatbot that brings LadyRice, a fan-made virtual character, to life: she chats in character, draws illustrations of herself, and answers questions about her own backstory.
 > Built with **GPT-4o role-play**, a **RAG character knowledge base**, and **local Stable Diffusion image generation**.
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
@@ -22,7 +22,7 @@
 
 ## Overview
 
-LadyRice is an original character based on Rice Shower from *Umamusume: Pretty Derby*. She has short black hair with blue highlights, purple eyes, and a blue rose hair accessory. She is shy and gentle, loves matcha sweets and street fashion, and is written as a virtual influencer who travels between Kyoto and Tokyo.
+LadyRice is a fan-made character based on Rice Shower from *Umamusume: Pretty Derby*. She has short black hair with blue highlights, purple eyes, and a blue rose hair accessory. She is shy and gentle, loves matcha sweets and street fashion, and is written as a virtual influencer who travels between Kyoto and Tokyo.
 
 This project turns her into a LINE Official Account. Users can chat with her directly, or use commands to switch modes: ask her to draw a picture of herself, ask about her past, or have her tell a joke or roast them.
 
