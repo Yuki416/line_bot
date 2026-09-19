@@ -212,6 +212,9 @@ def handle_message(event):
         user_id = event.source.user_id
         user_message = event.message.text
 
+        # 將全形冒號轉為半形冒號
+        user_message = user_message.replace('：', ':')
+
         # 初始化用戶聊天歷史
         if user_id not in chat_history:
             chat_history[user_id] = []
